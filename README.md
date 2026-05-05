@@ -110,13 +110,168 @@ zhiguai-baike-index/
 
 ## 使用方式
 
-### 作为 Claude/AI Skill 使用
-1. 克隆本仓库到本地
-2. 在支持 Skill 的 AI 客户端（如 Claude Code / WorkBuddy 等）加载整个目录
-3. 按 30 秒上手里的 5 种提问范式对话
+本 Skill 本质上是一套**供 AI 客户端读取的结构化文档 + 数据包**，不需要任何编译、不依赖任何运行环境。
 
-### 作为参考资料使用
-直接浏览 `data/indices/` 下的索引文件，或访问上方网站获得可视化体验。
+### 📦 最快路径：下载打包好的 Skill 压缩包
+
+👉 **[点击下载 zhiguai-baike-index.zip](./zhiguai-baike-index.zip)**（约 2-3 MB）
+
+下载解压后得到完整的 Skill 目录。然后根据你使用的 AI 客户端选择以下任一方式加载。
+
+---
+
+### 场景 A：只想在线查阅素材（零门槛）
+
+**不用下载、不用 AI 客户端**，直接访问配套网站：
+
+**👉 [https://pennsyjun-droid.github.io/zhiguai-narrative-v2/](https://pennsyjun-droid.github.io/zhiguai-narrative-v2/)**
+
+| 能做什么 | 不能做什么 |
+|---------|-----------|
+| ✅ 浏览 8 大索引 | ❌ AI 对话 |
+| ✅ 查某个妖怪/神明的完整档案 | ❌ 生成角色卡 |
+| ✅ 阅读唐传奇/酉阳杂俎原文 | ❌ 自动跨索引关联 |
+| ✅ 搜索、筛选、分类查看 | ❌ 定制化素材推荐 |
+
+网站是**Skill 的一部分功能**（索引浏览层）。如果你只是想看资料，这条路径足够。如果你要让 AI 帮你生成角色卡、做跨索引检索、直接对话出设计方案，请走下面的场景 B/C/D。
+
+---
+
+### 场景 B：用 Claude Desktop / Claude.ai Projects 加载（推荐给大多数人）
+
+**适用**：你已经有 Claude 账号，想在 Claude 里直接用这个 Skill
+
+**步骤**：
+
+1. **下载压缩包**：点击仓库顶部的 ⬇️ **[zhiguai-baike-index.zip](./zhiguai-baike-index.zip)**，或在本页面上方下载
+2. **解压到本地任意目录**（如 `D:\zhiguai-baike-index\`）
+3. **登录 Claude.ai**，新建一个 Project
+4. **在 Project 的"知识"（Knowledge）面板中**，把解压出来的整个文件夹里的所有 `.md` 文件上传（拖拽进去即可）
+   - 重点文件：`SKILL.md`、`references/*.md`、`assets/*.md`、`data/indices/*.md`
+   - `data/fulltext/` 下的原文文件可选上传（需要查原典时再传）
+5. **在 Project 的"指令"（Custom Instructions）中贴入**：
+   ```
+   请严格按照 SKILL.md 中的规则工作。所有输出必须可回溯到索引或原文，禁止脑补。
+   ```
+6. 完成。现在可以直接在这个 Project 里对话，比如：
+   - "给我所有⭐⭐⭐的龙蛇类妖怪"
+   - "MO-010 白蛇精 生成妖怪角色卡"
+   - "钟馗的完整资料"
+
+---
+
+### 场景 C：用 Claude Code / Cursor / WorkBuddy 等 AI IDE
+
+**适用**：你用的是带 Skill 加载机制的 AI 开发客户端
+
+**步骤**：
+
+1. **克隆本仓库到本地**：
+   ```bash
+   git clone https://github.com/pennsyjun-droid/zhiguai-baike-index.git
+   ```
+2. **打开你的 AI IDE**（Claude Code / Cursor / WorkBuddy 等）
+3. **把克隆下来的文件夹作为工作区打开**
+4. **让 AI Agent 读取 SKILL.md**：
+   ```
+   请读取当前工作区的 SKILL.md 并按规则工作
+   ```
+5. 之后正常对话即可
+
+**WorkBuddy 专用提示**：如果你用的是腾讯 WorkBuddy，可以把整个目录复制到 `~/.workbuddy/skills/zhiguai-baike-index/`，Skill 会被自动识别加载。
+
+---
+
+### 场景 D：没有专门客户端，直接和 AI 对话
+
+**适用**：你用的是 ChatGPT / Claude 网页版 / 豆包 / Kimi 等通用对话 AI，没有 Skill 加载功能
+
+**最小可用子集**（只上传这几个文件就够 80% 功能）：
+
+1. `SKILL.md`（核心规则，必须）
+2. `references/案例示例.md`（输出格式参考）
+3. `references/输出协议_三级降级.md`（输出层级规则）
+4. 你当前要查询的**那一个索引文件**（如要查妖怪就上传 `data/indices/06_妖怪精怪索引.md`）
+
+**操作**：
+1. 新建一个对话
+2. 把上面 4 个文件的内容**依次贴到对话框**（大模型支持的话直接上传）
+3. 然后提问：
+   ```
+   请按 SKILL.md 的规则工作。
+   现在我想查：[你的需求]
+   ```
+
+> ⚠️ 注意：这种方式每次对话都要重新粘贴一次文件，不如场景 B/C 方便。但好处是不需要特殊客户端。
+
+---
+
+### 常见问题
+
+<details>
+<summary><b>Q1：我必须把整个 2-3 MB 的数据都加载进去吗？</b></summary>
+
+不需要。AI 的 context 按需加载：
+- `SKILL.md` 必须（否则 AI 不知道规则）
+- `references/*.md` 按需（AI 遇到细节问题才会查）
+- `data/indices/` 只需加载**当前要用的那一个**（如查妖怪就加载 MO 索引）
+- `data/fulltext/` 最少使用（明确要原文时才加载）
+
+**实际对话中，单次加载量通常在 200-500 KB**，不是 2-3 MB 全量。
+</details>
+
+<details>
+<summary><b>Q2：我是游戏策划，不会用 git / 命令行，怎么办？</b></summary>
+
+直接选 **场景 A（网站浏览）** 或 **场景 B（Claude Desktop 上传）**。这两种都不需要命令行。
+
+如果你只是想查资料，场景 A 零操作。如果你想让 AI 帮你生成卡、做组合推荐，场景 B 只需要"下载 → 解压 → 拖进 Claude"三步。
+</details>
+
+<details>
+<summary><b>Q3：我在公司内网，不能访问 GitHub，怎么办？</b></summary>
+
+让能访问的同事下载后发给你。解压即可使用，完全离线运行。**Skill 不需要任何网络请求**，本地 AI 客户端读取本地文件即可。
+</details>
+
+<details>
+<summary><b>Q4：数据会被哪个公司收集吗？</b></summary>
+
+本仓库**不含任何数据收集代码**，纯 Markdown 文件。AI 客户端如何处理你的对话取决于客户端本身（Claude / ChatGPT 等），与本 Skill 无关。
+</details>
+
+<details>
+<summary><b>Q5：能不能商用？比如做成付费游戏的素材库？</b></summary>
+
+**不能**。本仓库采用 CC BY-NC-ND 4.0 协议，**禁止商业使用、禁止修改分发**。如有商用需求，请通过 Issues 联系作者申请书面授权。详见 [`LICENSE`](./LICENSE) 与 [`data/NOTICE.md`](./data/NOTICE.md)。
+</details>
+
+---
+
+### 首次使用推荐流程（给第一次看到 Skill 的人）
+
+按这个顺序走一遍，15 分钟熟悉 Skill：
+
+```
+Step 1（2 分钟）→ 访问网站 浏览一下索引结构
+      https://pennsyjun-droid.github.io/zhiguai-narrative-v2/
+
+Step 2（3 分钟）→ 看一份完整演示案例
+      推荐：_human_docs/演示案例/01_MO妖怪精怪_水域BOSS选型.md
+      （含 2 张真实卡，能直观理解 Skill 的交付形态）
+
+Step 3（5 分钟）→ 下载 zip + 加载到 Claude Desktop（场景 B）
+      或用你熟悉的 AI IDE（场景 C）
+
+Step 4（5 分钟）→ 真实对话试 5 种提问
+      · "给我⭐⭐⭐水族类妖怪"
+      · "MO-010 生成妖怪角色卡"
+      · "钟馗的完整资料"
+      · "悬念铺设型开场桥段"
+      · "人龙跨界恋情的经典案例"
+```
+
+走完这四步，你就已经会用了。
 
 ---
 
