@@ -1,0 +1,38 @@
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temp
+*.tmp
+*.log
+*.bak
+
+# Python (if build scripts added later)
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+env/
+
+# Node (if web components added later)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# WorkBuddy / AI workspace
+.workbuddy/
+.codebuddy/
+.cursor/
+.claude/
+
+# OS cache
+*.lnk
